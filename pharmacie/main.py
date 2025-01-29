@@ -1,6 +1,6 @@
 import tkinter as tk
 import customtkinter as ctk
-from views import AddProductPage, ShowProductsPage, ShowUsersPage
+from views import AddProductPage, ShowProductsPage, ShowUsersPage, RecordProductOutPage
 from menu import MenuBar
 from login import LoginPage
 from loading import LoadingPage
@@ -44,6 +44,10 @@ class MainApp(ctk.CTk):
         self.show_users_button = ctk.CTkButton(self, text="Afficher les utilisateurs", command=self.show_users)
         self.show_users_button.pack(pady=10)
 
+        # Créer un bouton pour enregistrer les sorties de produits
+        self.record_product_out_button = ctk.CTkButton(self, text="Enregistrer une sortie", command=self.show_record_product_out_page)
+        self.record_product_out_button.pack(pady=10)
+
     def show_add_product_page(self):
         # Créer une nouvelle fenêtre pour la page d'ajout de produits
         add_product_window = ctk.CTkToplevel(self)
@@ -54,13 +58,13 @@ class MainApp(ctk.CTk):
 
         # Ajouter la page d'ajout de produits à la nouvelle fenêtre
         add_product_page = AddProductPage(add_product_window)
-        add_product_page.pack(fill="both", expand=True)
+        add_product_page.pack(fill="both", expand=False)
 
     def show_products(self):
         # Créer une nouvelle fenêtre pour afficher les produits
         show_products_window = ctk.CTkToplevel(self)
         show_products_window.title("Produits enregistrés")
-        show_products_window.geometry("800x600")  # Définir des dimensions spécifiques
+        show_products_window.geometry("1000x600")  # Définir des dimensions spécifiques
         show_products_window.transient(self)  # Rendre la fenêtre modale
         show_products_window.grab_set()  # Empêcher l'interaction avec la fenêtre principale
 
@@ -79,6 +83,24 @@ class MainApp(ctk.CTk):
         # Ajouter la page d'affichage des utilisateurs à la nouvelle fenêtre
         show_users_page = ShowUsersPage(show_users_window)
         show_users_page.pack(fill="both", expand=True)
+
+    def show_record_product_out_page(self):
+        # Créer une nouvelle fenêtre pour enregistrer les sorties de produits
+        record_product_out_window = ctk.CTkToplevel(self)
+        record_product_out_window.title("Enregistrer une sortie")
+        record_product_out_window.geometry("600x350")
+
+        # Ajouter la page d'enregistrement des sorties à la nouvelle fenêtre
+        record_product_out_page = RecordProductOutPage(record_product_out_window)
+        record_product_out_page.pack(fill="both", expand=True)
+
+    def center_window(self, window):
+        window.update_idletasks()
+        width = window.winfo_width()
+        height = window.winfo_height()
+        x = (window.winfo_screenwidth() / 2) - (width // 2)
+        y = (window.winfo_screenheight() // 2) - (height // 2)
+        window.geometry(f'{width}x{height}+{x}+{y}')
 
 if __name__ == "__main__":
     app = MainApp()
