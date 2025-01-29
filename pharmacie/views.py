@@ -5,6 +5,60 @@ import customtkinter as ctk
 import sqlite3
 from datetime import datetime
 
+class AddUserPage(ctk.CTkFrame):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+        parent.grid_rowconfigure(0, weight=1)
+        parent.grid_columnconfigure(0, weight=1)
+
+        # Créer les labels
+        ctk.CTkLabel(self, text="Nom:").grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(self, text="Prénom:").grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(self, text="Login:").grid(row=2, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(self, text="Mot de passe:").grid(row=3, column=0, padx=10, pady=10, sticky="w")
+        ctk.CTkLabel(self, text="Privilège:").grid(row=4, column=0, padx=10, pady=10, sticky="w")
+
+        # Créer les champs de saisie
+        self.nom_entry = ctk.CTkEntry(self)
+        self.prenom_entry = ctk.CTkEntry(self)
+        self.login_entry = ctk.CTkEntry(self)
+        self.password_entry = ctk.CTkEntry(self, show="*")
+        self.privilege_combobox = ttk.Combobox(self, values=["Admin", "Pharmacien"], width=10)
+
+        # Positionner les champs de saisie
+        self.nom_entry.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+        self.prenom_entry.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+        self.login_entry.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
+        self.password_entry.grid(row=3, column=1, padx=10, pady=10, sticky="ew")
+        self.privilege_combobox.grid(row=4, column=1, padx=10, pady=10, sticky="ew")
+
+        # Ajouter un bouton pour soumettre le formulaire
+        self.submit_button = ctk.CTkButton(self, text="Ajouter Utilisateur", command=self.add_user)
+        self.submit_button.grid(row=5, columnspan=2, pady=20)
+
+    def add_user(self):
+        nom = self.nom_entry.get()
+        prenom = self.prenom_entry.get()
+        login = self.login_entry.get()
+        password = self.password_entry.get()
+        privilege = self.privilege_combobox.get()
+
+        try:
+            conn = sqlite3.connect('pharmacie.db')
+            c = conn.cursor()
+            c.execute('''
+                INSERT INTO Utilisateur (nom, prenom, login, mot_de_passe, privilege)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (nom, prenom, login, password, privilege))
+            conn.commit()
+            messagebox.showinfo("Info", "Utilisateur ajouté avec succès !")
+        except sqlite3.IntegrityError:
+            messagebox.showerror("Erreur", "Erreur lors de l'ajout de l'utilisateur.")
+        finally:
+            conn.close()
+
 class AddProductPage(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
@@ -275,8 +329,6 @@ class ShowProductsPage(ctk.CTkFrame):
                 modify_product_window = ctk.CTkToplevel(self)
                 modify_product_window.title("Modifier un produit")
                 modify_product_window.geometry("400x300")
-                modify_product_window.transient(self)  # Rendre la fenêtre modale
-                modify_product_window.grab_set()  # Empêcher l'interaction avec la fenêtre principale
 
                 modify_product_page = ModifyProductPage(modify_product_window, product)
                 modify_product_page.pack(fill="both", expand=True)
