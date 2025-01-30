@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS Utilisateur (
     prenom TEXT NOT NULL,
     login TEXT UNIQUE NOT NULL,
     mot_de_passe TEXT NOT NULL,
-    privilege TEXT CHECK(privilege IN ('Admin', 'Pharmacien')) NOT NULL
+    privilege TEXT CHECK(privilege IN ('Admin', 'Pharmacien')) NOT NULL,
+    first_login INTEGER DEFAULT 1
 )
 ''')
 
@@ -56,5 +57,3 @@ except sqlite3.IntegrityError:
 # Sauvegarder les changements et fermer la connexion
 conn.commit()
 conn.close()
-
-

@@ -5,6 +5,46 @@ import customtkinter as ctk
 import sqlite3
 from datetime import datetime
 
+class ChangePasswordPage(ctk.CTkFrame):
+    def __init__(self, parent, user, app):
+        super().__init__(parent)
+        self.user = user
+        self.app = app
+
+        self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+        parent.grid_rowconfigure(0, weight=1)
+        parent.grid_columnconfigure(0, weight=1)
+
+        # Créer les labels et les champs de saisie
+        ctk.CTkLabel(self, text="Nouveau Login:").grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.new_login_entry = ctk.CTkEntry(self)
+        self.new_login_entry.grid(row=0, column=1, padx=10, pady=10, sticky="ew")
+
+        ctk.CTkLabel(self, text="Nouveau Mot de passe:").grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        self.new_password_entry = ctk.CTkEntry(self, show="*")
+        self.new_password_entry.grid(row=1, column=1, padx=10, pady=10, sticky="ew")
+
+        # Ajouter un bouton pour soumettre le formulaire
+        self.submit_button = ctk.CTkButton(self, text="Changer", command=self.change_password)
+        self.submit_button.grid(row=2, columnspan=2, pady=20)
+
+    def change_password(self):
+        new_login = self.new_login_entry.get()
+        new_password = self.new_password_entry.get()
+
+        if not new_login or not new_password:
+            messagebox.showerror("Erreur", "Veuillez remplir tous les champs.")
+            return
+
+        conn = sqlite3.connect('pharmacie.db')
+        c = conn.cursor()
+        c.execute("UPDATE Utilisateur SET login=?, mot_de_passe=?, first_login=0 WHERE id_user=?", (new_login, new_password, self.user[0]))
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Info", "Login et mot de passe changés avec succès !")
+        self.app.show_main_page(self.user)
+
 class AddUserPage(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)

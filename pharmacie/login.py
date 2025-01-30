@@ -36,6 +36,9 @@ class LoginPage(ctk.CTkFrame):
         conn.close()
 
         if user:
-            self.app.show_main_page(user)
+            if user[-1] == 1:  # Vérifier si c'est la première connexion
+                self.app.show_change_password_page(user)
+            else:
+                self.app.show_main_page(user)
         else:
             messagebox.showerror("Erreur", "Login ou mot de passe incorrect.")
