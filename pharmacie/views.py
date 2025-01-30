@@ -412,32 +412,43 @@ class ShowProductsPage(ctk.CTkFrame):
             self.search_entry.delete(0, tk.END)
 
 
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import ttk
+import customtkinter as ctk
+import sqlite3
+from datetime import datetime
+
 class ShowUsersPage(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        self.grid(row=0, column=0, padx=20, pady=20)
+        self.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
+        parent.grid_rowconfigure(0, weight=1)
+        parent.grid_columnconfigure(0, weight=1)
 
-        # Définir les styles pour le Treeview
+        # Configurer le style du Treeview
         style = ttk.Style()
-        style.configure("Treeview.Heading", font=("Helvetica", 12, "bold"), anchor="center")
-        style.configure("Treeview", rowheight=25, font=("Helvetica", 10), background="white", foreground="black", fieldbackground="white")
-        style.map("Treeview", background=[("selected", "gray")])
+        style.configure("Treeview.Heading", font=("Helvetica", 12, "bold"))
 
         # Créer un Treeview pour afficher les utilisateurs
-        self.tree = ttk.Treeview(self, columns=("id_user", "nom", "prenom", "privilege"), show="headings")
+        self.tree = ttk.Treeview(self, columns=("id_user", "nom", "prenom", "privilege"), show="headings", height=10)
         self.tree.heading("id_user", text="ID")
         self.tree.heading("nom", text="Nom")
         self.tree.heading("prenom", text="Prénom")
         self.tree.heading("privilege", text="Privilège")
 
         # Centrer les contenus dans les colonnes
-        self.tree.column("id_user", anchor="center", width=100)
-        self.tree.column("nom", anchor="center", width=150)
-        self.tree.column("prenom", anchor="center", width=150)
-        self.tree.column("privilege", anchor="center", width=150)
+        self.tree.column("id_user", anchor="center")
+        self.tree.column("nom", anchor="center")
+        self.tree.column("prenom", anchor="center")
+        self.tree.column("privilege", anchor="center")
 
-        self.tree.pack(side=tk.LEFT, fill="both", expand=True)
+        self.tree.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+
+        # Ajouter un bouton pour supprimer les utilisateurs sélectionnés
+        self.delete_button = ctk.CTkButton(self, text="Supprimer", command=self.delete_user)
+        self.delete_button.grid(row=1, column=0, padx=10, pady=10, sticky="ew")
 
         # Récupérer les utilisateurs de la base de données
         self.load_users()
@@ -447,10 +458,27 @@ class ShowUsersPage(ctk.CTkFrame):
             self.tree.delete(item)
         conn = sqlite3.connect('pharmacie.db')
         c = conn.cursor()
-        c.execute("SELECT id_user, nom, prenom, login, privilege FROM Utilisateur")
+        c.execute("SELECT id_user, nom, prenom, privilege FROM Utilisateur")
         for row in c.fetchall():
-            self.tree.insert("", "end", values=(row[0], row[1], row[2], row[3], row[4]))
+            self.tree.insert("", "end", values=(row[0], row[1], row[2], row[3]))
         conn.close()
+
+    def delete_user(self):
+        selected_item = self.tree.selection()
+        if not selected_item:
+            messagebox.showerror("Erreur", "Veuillez sélectionner un utilisateur à supprimer.")
+            return
+
+        user_id = self.tree.item(selected_item, "values")[0]
+
+        conn = sqlite3.connect('pharmacie.db')
+        c = conn.cursor()
+        c.execute("DELETE FROM Utilisateur WHERE id_user=?", (user_id,))
+        conn.commit()
+        conn.close()
+
+        self.load_users()
+        messagebox.showinfo("Info", "Utilisateur supprimé avec succès !")
 
 class RecordProductOutPage(ctk.CTkFrame):
     def __init__(self, parent):

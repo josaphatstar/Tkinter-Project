@@ -82,10 +82,10 @@ class MainApp(ctk.CTk):
         show_products_page.pack(fill="both", expand=True)
 
     def show_users(self):
-        # Créer une nouvelle fenêtre pour afficher les utilisateurs
+    # Créer une nouvelle fenêtre pour afficher les utilisateurs
         show_users_window = ctk.CTkToplevel(self)
         show_users_window.title("Utilisateurs enregistrés")
-        show_users_window.geometry("800x600")  # Définir des dimensions spécifiques
+        show_users_window.geometry("700x300")  # Définir des dimensions spécifiques
         show_users_window.transient(self)  # Rendre la fenêtre modale
         show_users_window.grab_set()  # Empêcher l'interaction avec la fenêtre principale
 
