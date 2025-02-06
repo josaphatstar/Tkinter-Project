@@ -5,6 +5,9 @@ from menu import MenuBar
 from login import LoginPage
 from loading import LoadingPage
 
+ctk.set_appearance_mode("dark")  # Modes: "light", "dark", "system"
+ctk.set_default_color_theme("green")  # Thèmes: "blue", "green", "dark-blue"
+
 class MainApp(ctk.CTk):
     def __init__(self):
         super().__init__()

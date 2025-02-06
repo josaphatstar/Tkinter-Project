@@ -410,14 +410,7 @@ class ShowProductsPage(ctk.CTkFrame):
     def clear_placeholder(self, event=None):
         if self.search_entry.get() == self.placeholder_text:
             self.search_entry.delete(0, tk.END)
-
-
-import tkinter as tk
-from tkinter import messagebox
-from tkinter import ttk
-import customtkinter as ctk
-import sqlite3
-from datetime import datetime
+            
 
 class ShowUsersPage(ctk.CTkFrame):
     def __init__(self, parent):
